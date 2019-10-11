@@ -11,11 +11,11 @@ bucket = storage.bucket 'cs291_project2', skip_lookup: true
 # Helper Functions
 # -------------------------------
 def valid_digest(digest)
-  return params['digest'].length == 64 && params['digest'] =~ /^[A-Z0-9]+$/i
+  return params['digest'].length == 64 && params['digest'] =~ /^[A-F0-9]+$/i
 end
 
 def path_from_digest(digest)
-return (digest[0..1] + '/' + digest[2..3] + '/' + digest[4..-1]).downcase!
+  return (digest[0..1] + '/' + digest[2..3] + '/' + digest[4..-1]).downcase
 end
 
 # -------------------------------
@@ -61,6 +61,9 @@ delete '/files/:digest' do
     return 422
   end
 
+  # Get bucket path
+  bucket_path = path_from_digest(params['digest'])
+
   # Delete file if exists
   if bucket.files.map {|file| file.name}.include? bucket_path
     file = bucket.file bucket_path
@@ -75,18 +78,26 @@ end
 # -------------------------------
 post '/files/' do
 
-  # Make sure file param exists
-  if !params.include? 'file' || params['file'].length >= 2 ** 20
+  # Make sure file size is ok
+  begin
+    fsize = File.size(params['file']['tempfile'])
+  rescue
+    return 422
+  end
+
+  if !(fsize > 0 && fsize <= 2 ** 20)
     return 422
   end
 
   # Get bucket path
-  digest = Digest::SHA256.hexdigest params['file']
+  digest = Digest::SHA256.hexdigest File.read(params['file']['tempfile'])
   bucket_path = path_from_digest(digest)
 
   # Check if exists
   if bucket.files.map {|file| file.name}.include? bucket_path
     return 409
+  else
+    file = bucket.create_file params['file']['tempfile'], bucket_path
   end
 
   content_type :json
