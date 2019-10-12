@@ -22,7 +22,7 @@ end
 # GET
 # -------------------------------
 get '/' do
-  redirect to('/files/'), 303
+  redirect to('/files/'), 302
 end
 
 get '/files/' do
