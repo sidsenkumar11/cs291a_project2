@@ -45,6 +45,7 @@ get '/files/:digest' do
     file = bucket.file bucket_path
     downloaded = file.download
     downloaded.rewind
+    content_type file.content_type
     return downloaded.read
   else
     return 404
@@ -97,7 +98,7 @@ post '/files/' do
   if bucket.files.map {|file| file.name}.include? bucket_path
     return 409
   else
-    file = bucket.create_file params['file']['tempfile'], bucket_path
+    file = bucket.create_file(params['file']['tempfile'], bucket_path, content_type: params['file']['type'])
   end
 
   content_type :json
