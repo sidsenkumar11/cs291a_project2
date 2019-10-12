@@ -1,0 +1,35 @@
+Sinatra
+    - Simple Ruby framework
+    - Easy to write API endpoints and requests against them
+
+Google Cloud Run
+    - Allows you to run containers in response to a web request
+    - Pass HTTP request to the container
+    - Different from AWS Lambda b/c Lambda only supports certain frameworks (Ruby, Python, etc). Those frameworks have specific formats that they take input/output
+    - Cloud Run runs anything, as long as there's a port that it's listening on. And it's really meant for web requests.
+    - Cost is about 2x cost of AWS
+    - But, setup and deployment is easier than AWS
+    - AWS Lambda doesn't work web requests natively; you have to first setup API gateway and associate the lambda with it
+
+Service
+    - REST based service on Google Cloud Resource
+    - 4 primary API endpoints
+        - GET /
+            - Redirect to /files
+        - GET /files
+            - List of files has sha256, in sorted order. Lowercase the letters
+        - POST /files
+            - Respond 201 created, with JSON containing hash
+        - Get, create, delete files
+        - Get list of files
+    - 1 redirect endpoint
+
+
+Gemfile / Gemfile.lock
+    - Specifications for Ruby for what packages are needed
+    - bundle install builds Gemfile.lock and installs the gems locally
+
+puma
+    - Application server AND our HTTP server for this project
+    - GCR will filter many requests and do some rate limiting, so not as necessary to have a separate HTTP server
+    - Some weird requests do go through; in real production you'd probably still want to use nginx in front of it
