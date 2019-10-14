@@ -33,3 +33,26 @@ puma
     - Application server AND our HTTP server for this project
     - GCR will filter many requests and do some rate limiting, so not as necessary to have a separate HTTP server
     - Some weird requests do go through; in real production you'd probably still want to use nginx in front of it
+
+Results:
+
+ab -t 8 -c 1 https://siddarth-fi6eeq56la-uc.a.run.app/
+
+-> 83
+
+ab -t 8 -c 4 https://siddarth-fi6eeq56la-uc.a.run.app/
+
+-> 329
+
+ab -t 8 -c 16 https://siddarth-fi6eeq56la-uc.a.run.app/
+
+-> 1273
+
+ab -t 8 -c 64 https://siddarth-fi6eeq56la-uc.a.run.app/
+
+-> 4227
+
+ab -t 8 -c 256 https://siddarth-fi6eeq56la-uc.a.run.app/
+
+-> 13668
+
